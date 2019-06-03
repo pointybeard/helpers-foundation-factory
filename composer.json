@@ -1,9 +1,10 @@
 {
     "name": "pointybeard/helpers-foundation-factory",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Provides foundation factory classes and factory design pattern functionality",
     "homepage": "https://github.com/pointybeard/helpers-foundation-factory",
     "license": "MIT",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Alannah Kearney",
@@ -12,17 +13,13 @@
             "role": "Developer"
         }
     ],
-    "require": {
-        "php": ">=7.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~8"
-    },
     "support": {
         "issues": "https://github.com/pointybeard/helpers-foundation-factory/issues",
         "wiki": "https://github.com/pointybeard/helpers-foundation-factory/wiki"
     },
-    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2"
+    },
     "autoload": {
         "psr-4": {
             "pointybeard\\Helpers\\Foundation\\": "src/"
