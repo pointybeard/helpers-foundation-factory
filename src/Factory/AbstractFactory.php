@@ -45,7 +45,17 @@ abstract class AbstractFactory implements Interfaces\FactoryInterface
         return null === static::getExpectedClassType() || is_a($class, static::getExpectedClassType(), false);
     }
 
-    protected static function instanciate(string $class): object
+    public static function build(string $name, ...$arguments): object
+    {
+        $concreteClass = self::instanciate(
+            self::generateTargetClassName($name),
+            ...$arguments
+        );
+
+        return $concreteClass;
+    }
+
+    protected static function instanciate(string $class, ...$arguments): object
     {
         if (!class_exists($class)) {
             throw new Exceptions\UnableToInstanciateConcreteClassException(sprintf(
@@ -54,7 +64,10 @@ abstract class AbstractFactory implements Interfaces\FactoryInterface
             ));
         }
 
-        $object = new $class();
+        $object = empty($arguments)
+            ? new $class()
+            : new $class(...$arguments)
+        ;
 
         if (!static::isExpectedClassType($object)) {
             throw new Exceptions\UnableToInstanciateConcreteClassException(sprintf(
