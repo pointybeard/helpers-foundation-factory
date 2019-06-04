@@ -6,19 +6,25 @@ namespace pointybeard\Helpers\Foundation\Factory;
 
 abstract class AbstractFactory implements Interfaces\FactoryInterface
 {
-    // Prevents the class from being instanciated
-    private function __construct()
+    public static function build(string $name, ...$arguments): object
     {
+        $factory = new static();
+        $concreteClass = $factory->instanciate(
+            $factory->generateTargetClassName($name),
+            ...$arguments
+        );
+
+        return $concreteClass;
     }
 
-    public static function getExpectedClassType(): ?string
+    public function getExpectedClassType(): ?string
     {
-        // side effect: returning null will cause self::isExpectedClassType()
+        // side effect: returning null will cause $this->isExpectedClassType()
         // to always return true.
         return null;
     }
 
-    protected static function generateTargetClassName(string ...$args): string
+    protected function generateTargetClassName(string ...$args): string
     {
         // If the number of items in $args is not equal to the
         // number of directives in static::getTemplateNamespace(), an E_WARNING
@@ -30,7 +36,7 @@ abstract class AbstractFactory implements Interfaces\FactoryInterface
         }, E_WARNING);
 
         try {
-            $result = vsprintf(static::getTemplateNamespace(), $args);
+            $result = vsprintf($this->getTemplateNamespace(), $args);
         } catch (\ErrorException $ex) {
             restore_error_handler();
             throw new Exceptions\UnableToGenerateTargetClassNameException(static::class, $ex->getMessage());
@@ -40,22 +46,12 @@ abstract class AbstractFactory implements Interfaces\FactoryInterface
         return $result;
     }
 
-    protected static function isExpectedClassType(object $class): bool
+    protected function isExpectedClassType(object $class): bool
     {
-        return null === static::getExpectedClassType() || is_a($class, static::getExpectedClassType(), false);
+        return null === $this->getExpectedClassType() || is_a($class, $this->getExpectedClassType(), false);
     }
 
-    public static function build(string $name, ...$arguments): object
-    {
-        $concreteClass = self::instanciate(
-            self::generateTargetClassName($name),
-            ...$arguments
-        );
-
-        return $concreteClass;
-    }
-
-    protected static function instanciate(string $class, ...$arguments): object
+    protected function instanciate(string $class, ...$arguments): object
     {
         if (!class_exists($class)) {
             throw new Exceptions\UnableToInstanciateConcreteClassException(sprintf(
@@ -69,11 +65,11 @@ abstract class AbstractFactory implements Interfaces\FactoryInterface
             : new $class(...$arguments)
         ;
 
-        if (!static::isExpectedClassType($object)) {
+        if (!$this->isExpectedClassType($object)) {
             throw new Exceptions\UnableToInstanciateConcreteClassException(sprintf(
                 'Class %s is not of expected type %s',
                 $class,
-                static::getExpectedClassType()
+                $this->getExpectedClassType()
             ));
         }
 
