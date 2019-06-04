@@ -6,7 +6,7 @@ namespace pointybeard\Helpers\Foundation\Factory\Interfaces;
 
 interface FactoryInterface
 {
-    public static function getTemplateNamespace(): string;
+    public function getTemplateNamespace(): string;
 
-    public static function getExpectedClassType(): ?string;
+    public function getExpectedClassType(): ?string;
 }
