@@ -1,7 +1,7 @@
 # PHP Helpers: Factory Foundation Classes
 
--   Version: v1.0.1
--   Date: June 03 2019
+-   Version: v1.0.2
+-   Date: June 04 2019
 -   [Release notes](https://github.com/pointybeard/helpers-foundation-factory/blob/master/CHANGELOG.md)
 -   [GitHub repository](https://github.com/pointybeard/helpers-foundation-factory)
 
@@ -55,16 +55,24 @@ abstract class AbstractCar implements CarInterface
     }
 }
 
-final class CarFactory extends Factory\AbstractFactory
+// Create a factory called MyApp\CarFactory
+Factory\create(
+    __NAMESPACE__.'\\CarFactory',
+    __NAMESPACE__.'\\%s',
+    __NAMESPACE__.'\\AbstractCar'
+);
+
+// Create custom factory class
+class PeugeotFactory extends Factory\AbstractFactory
 {
-    public static function getTemplateNamespace(): string
+    public function getTemplateNamespace(): string
     {
-        return '\\MyApp\\%s';
+        return __NAMESPACE__.'\\%s';
     }
 
-    public static function getExpectedClassType(): ?string
+    public function getExpectedClassType(): ?string
     {
-        return '\\MyApp\\AbstractCar';
+        return __NAMESPACE__.'\\Peugeot';
     }
 }
 
@@ -73,25 +81,27 @@ class Volvo extends AbstractCar
 {
 }
 
-// This adds a constructor which expects a model and serial number. They need
+// This adds a constructor which expects a model and vin number. They need
 // to be passed in when CarFactory::build() is called
 class Peugeot extends AbstractCar
 {
     private $model;
-    private $serial;
+    private $vin;
 
-    public function __construct(string $model, string $serial) {
+    public function __construct(string $model, string $vin)
+    {
         $this->model = $model;
-        $this->serial = $serial;
+        $this->vin = $vin;
     }
 
-    public function __get(string $name) {
+    public function __get(string $name)
+    {
         return $this->$name;
     }
 
     public function __toString(): string
     {
-        return parent::__toString() . " I am a model {$this->model} with serial number {$this->serial}";
+        return parent::__toString()." I am a model {$this->model} with vehicle identification number {$this->vin}";
     }
 }
 
@@ -101,27 +111,35 @@ class Cabbage
 }
 
 $car = CarFactory::build('Volvo');
-var_dump((string)$car);
+var_dump((string) $car);
 // string(16) "Hi! I'm a Volvo."
 
-$car = CarFactory::build('Peugeot', '307', '12345ABCDE');
-var_dump((string)$car);
-// string(65) "Hi! I'm a Peugeot. I am a model 307 with serial number 12345ABCDE"
+$car = PeugeotFactory::build('Peugeot', '206', 'VF32HRHYF43242177');
+var_dump((string) $car);
+// string(88) "Hi! I'm a Peugeot. I am a model 206 with vehicle identification number VF32HRHYF43242177"
+
+try {
+    $car = PeugeotFactory::build('Volvo', 'XC60', 'YV1DZ8256C227123');
+} catch (Factory\Exceptions\UnableToInstanciateConcreteClassException $ex) {
+    echo 'Error: Cannot build a Volvo in the Peugeot factory!'.PHP_EOL;
+}
+// Error: Cannot build a Volvo in the Peugeot factory!
 
 try {
     CarFactory::build('Suzuki');
 } catch (Factory\Exceptions\UnableToInstanciateConcreteClassException $ex) {
-    echo 'Error! Unable to build a Suzuki. Returned: '.$ex->getMessage().PHP_EOL;
+    echo 'Error: Unable to build a Suzuki. Returned: '.$ex->getMessage().PHP_EOL;
 }
-// Error! Unable to build a Suzuki. Returned: Class \MyApp\Suzuki does not exist
+// Error: Unable to build a Suzuki. Returned: Class \MyApp\Suzuki does not exist
 
 try {
     CarFactory::build('Cabbage');
 } catch (Factory\Exceptions\UnableToInstanciateConcreteClassException $ex) {
-    echo 'Error! Unable to build a Cabbage. Returned: '.$ex->getMessage().PHP_EOL;
+    echo 'Error: Unable to build a Cabbage. Returned: '.$ex->getMessage().PHP_EOL;
 }
-// Error! Unable to build a Cabbage. Returned: Class \MyApp\Cabbage is not
+// Error: Unable to build a Cabbage. Returned: Class \MyApp\Cabbage is not
 // of expected type \MyApp\AbstractCar
+
 
 ```
 

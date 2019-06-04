@@ -1,6 +1,6 @@
 {
     "name": "pointybeard/helpers-foundation-factory",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Provides foundation factory classes and factory design pattern functionality",
     "homepage": "https://github.com/pointybeard/helpers-foundation-factory",
     "license": "MIT",
@@ -23,6 +23,9 @@
     "autoload": {
         "psr-4": {
             "pointybeard\\Helpers\\Foundation\\": "src/"
-        }
+        },
+        "files": [
+            "src/Factory/Factory.php"
+        ]
     }
 }
