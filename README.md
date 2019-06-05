@@ -1,7 +1,7 @@
 # PHP Helpers: Factory Foundation Classes
 
--   Version: v1.0.2
--   Date: June 04 2019
+-   Version: v1.0.3
+-   Date: June 05 2019
 -   [Release notes](https://github.com/pointybeard/helpers-foundation-factory/blob/master/CHANGELOG.md)
 -   [GitHub repository](https://github.com/pointybeard/helpers-foundation-factory)
 
@@ -37,47 +37,43 @@ include __DIR__.'/vendor/autoload.php';
 
 use pointybeard\Helpers\Foundation\Factory;
 
-interface CarInterface
+interface VehicleInterface
 {
     public function name(): string;
+    public function __toString(): string;
 }
 
-abstract class AbstractCar implements CarInterface
+abstract class AbstractVehicle implements VehicleInterface
 {
     public function name(): string
     {
         return (new \ReflectionClass(static::class))->getShortName();
     }
+}
 
+abstract class AbstractCar extends AbstractVehicle
+{
     public function __toString(): string
     {
         return "Hi! I'm a {$this->name()}.";
     }
 }
 
-// Create a factory called MyApp\CarFactory
-Factory\create(
-    __NAMESPACE__.'\\CarFactory',
-    __NAMESPACE__.'\\%s',
-    __NAMESPACE__.'\\AbstractCar'
-);
-
-// Create custom factory class
-class PeugeotFactory extends Factory\AbstractFactory
+abstract class AbstractTruck extends AbstractVehicle
 {
-    public function getTemplateNamespace(): string
+    public function __toString(): string
     {
-        return __NAMESPACE__.'\\%s';
-    }
-
-    public function getExpectedClassType(): ?string
-    {
-        return __NAMESPACE__.'\\Peugeot';
+        return "Hi! I'm a truck called {$this->name()}.";
     }
 }
 
 // Basic car
 class Volvo extends AbstractCar
+{
+}
+
+// Basic truck
+class Mack extends AbstractTruck
 {
 }
 
@@ -105,9 +101,37 @@ class Peugeot extends AbstractCar
     }
 }
 
-// Does not extend AbstractCar.. i.e. a Cabbage is not a type of car
+// a Cabbage is not a type of vehicle
 class Cabbage
 {
+}
+
+// Create a factory called MyApp\CarFactory
+Factory\create(
+    __NAMESPACE__.'\\CarFactory',
+    __NAMESPACE__.'\\%s',
+    __NAMESPACE__.'\\AbstractCar'
+);
+
+// Create a factory called MyApp\TruckFactory
+Factory\create(
+    __NAMESPACE__.'\\TruckFactory',
+    __NAMESPACE__.'\\%s',
+    __NAMESPACE__.'\\AbstractTruck'
+);
+
+// Create custom factory class
+class PeugeotFactory extends Factory\AbstractFactory
+{
+    public function getTemplateNamespace(): string
+    {
+        return __NAMESPACE__.'\\%s';
+    }
+
+    public function getExpectedClassType(): ?string
+    {
+        return __NAMESPACE__.'\\Peugeot';
+    }
 }
 
 $car = CarFactory::build('Volvo');
@@ -117,6 +141,10 @@ var_dump((string) $car);
 $car = PeugeotFactory::build('Peugeot', '206', 'VF32HRHYF43242177');
 var_dump((string) $car);
 // string(88) "Hi! I'm a Peugeot. I am a model 206 with vehicle identification number VF32HRHYF43242177"
+
+$truck = TruckFactory::build('Mack');
+var_dump((string) $truck);
+// string(28) "Hi! I'm a truck called Mack."
 
 try {
     $car = PeugeotFactory::build('Volvo', 'XC60', 'YV1DZ8256C227123');
@@ -139,7 +167,6 @@ try {
 }
 // Error: Unable to build a Cabbage. Returned: Class \MyApp\Cabbage is not
 // of expected type \MyApp\AbstractCar
-
 
 ```
 
