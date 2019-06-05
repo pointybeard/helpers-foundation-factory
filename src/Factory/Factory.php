@@ -41,13 +41,13 @@ if (!function_exists(__NAMESPACE__.'\create')) {
                     return get_class(new class() extends AbstractFactory {
                         public function getTemplateNamespace(): string
                         {
-                            [$templateNamespace, ] = FactoryRegistry::lookup(self::class);
+                            [$templateNamespace, ] = ClassRegistry::lookup(self::class);
                             return $templateNamespace;
                         }
 
                         public function getExpectedClassType(): ?string
                         {
-                            [, $expectedClassType] = FactoryRegistry::lookup(self::class);
+                            [, $expectedClassType] = ClassRegistry::lookup(self::class);
                             return $expectedClassType;
                         }
                     });
@@ -59,7 +59,7 @@ if (!function_exists(__NAMESPACE__.'\create')) {
 
         $classname = $wrapper::generate();
         class_alias($classname, $alias);
-        FactoryRegistry::register(
+        ClassRegistry::register(
             $classname,
             $templateNamespace,
             $expectedClassType
