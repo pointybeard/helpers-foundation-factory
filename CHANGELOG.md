@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.4][]
+#### Added
+-   Added `ClassRegistryInterface`
+
+#### Changed
+-   Renamed `FactoryRegistry` to `ClassRegistry`
+-   Updated `Factory\create()` to use `ClassRegistry`
+
 ## [1.0.3][]
 #### Changed
 -   Updated `Factory\create()` to use `Strings\random_unique_classname()`
@@ -23,6 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Added
 -   Initial release
 
+[1.0.4]: https://github.com/pointybeard/helpers-foundation-factory/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/pointybeard/helpers-foundation-factory/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/pointybeard/helpers-foundation-factory/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/pointybeard/helpers-foundation-factory/compare/1.0.0...1.0.1

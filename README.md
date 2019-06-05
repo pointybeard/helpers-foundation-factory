@@ -1,6 +1,6 @@
 # PHP Helpers: Factory Foundation Classes
 
--   Version: v1.0.3
+-   Version: v1.0.4
 -   Date: June 05 2019
 -   [Release notes](https://github.com/pointybeard/helpers-foundation-factory/blob/master/CHANGELOG.md)
 -   [GitHub repository](https://github.com/pointybeard/helpers-foundation-factory)
